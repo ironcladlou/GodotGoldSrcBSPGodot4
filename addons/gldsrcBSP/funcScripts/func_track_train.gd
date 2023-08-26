@@ -1,4 +1,4 @@
-extends Spatial
+extends Node3D
 
 var targetNodes = []
 var pathName = []
@@ -9,8 +9,8 @@ var scaleFactor
 var initialRot = 0
 var moveSound : AudioStreamPlayer3D = null
 
-onready var path = null#get_parent().find_node("testo",true,false)
-onready var pathFollow : PathFollow =null# path.get_child(0)
+@onready var path = null#get_parent().find_node("testo",true,false)
+@onready var pathFollow : PathFollow3D =null# path.get_child(0)
 func _ready():
 	var targetNodesPath = get_meta("targetNodePaths")
 	var pathName = get_meta("path")
@@ -50,7 +50,7 @@ func _ready():
 		i.translation +=  pathPosArr[0]
 
 	
-	translation = pathPosArr[0]
+	position = pathPosArr[0]
 	
 	if pathPosArr.size() > 2:
 		var a : Vector2 =  Vector2(pathPosArr[0].x,pathPosArr[0].z)
@@ -75,7 +75,7 @@ func _physics_process(delta):
 	
 	pathFollow.offset += delta*100*scaleFactor
 	
-	translation = pathFollow.translation
+	position = pathFollow.translation
 	
 	for i in triggers:
 		if pathFollow.translation.distance_to(i["position"]) < 10:
@@ -92,7 +92,7 @@ func _physics_process(delta):
 	if moveSound != null:
 		if !moveSound.playing:
 			if moveSound.stream != null:
-				moveSound.stream.loop_mode = AudioStreamSample.LOOP_FORWARD
+				moveSound.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 
 				moveSound.unit_db = 10
 				moveSound.play()

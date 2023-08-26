@@ -14,7 +14,7 @@ func _ready():
 	timer.wait_time = max(delay,0.0001)
 	timer.one_shot = true
 	timer.autostart = true
-	timer.connect("timeout",self,"activate")
+	timer.connect("timeout", activate)
 	add_child(timer)
 	
 

@@ -1,4 +1,4 @@
-tool
+@tool
 extends Node
 
 var curLineY = 0
@@ -60,7 +60,7 @@ func getTexture():
 	return texture
 
 func initAtlas():
-	var atlasArr =Geometry.make_atlas(atlasImgDimArr)
+	var atlasArr =Geometry2D.make_atlas(atlasImgDimArr)
 	atlasPos = atlasArr["points"]
 	atlasDim = atlasArr["size"]
 	

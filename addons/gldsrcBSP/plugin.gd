@@ -1,5 +1,4 @@
-tool
-extends EditorPlugin
+@tool extends EditorPlugin
 
 
 var pluginDock
@@ -7,25 +6,26 @@ var pluginDock
 var curSlectedNode = null
 
 func _enter_tree():
-	add_custom_type("GLDSRC_Map","Spatial",load("res://addons/gldsrcBSP/src/BSP_Map.gd"),null) 
-	pluginDock = load("res://addons/gldsrcBSP/pluginToolbar.tscn").instance()
-	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU,pluginDock)
+	add_custom_type("GLDSRC_Map","Node3D", preload("res://addons/gldsrcBSP/src/BSP_Map.gd"), preload("res://icon.svg")) 
+	pluginDock = preload("res://addons/gldsrcBSP/pluginToolbar.tscn").instantiate()
+	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, pluginDock)
 	
-	pluginDock.get_node("createMapButton").connect("pressed", self, "createMap")
+	pluginDock.pressed.connect(createMap)
 	pluginDock.visible = false
 
 func _exit_tree():
 	remove_custom_type("createMapButton")
-	remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU,pluginDock)
+	remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, pluginDock)
+#	pluginDock.free()
 
-func make_visible(visible: bool) -> void:
+func _make_visible(visible: bool) -> void:
 	if pluginDock:
 		pluginDock.set_visible(visible)
 
-func handles(object):
+func _handles(object):
 	return object is GLDSRC_Map 
 	
-func edit(object):
+func _edit(object):
 	curSlectedNode = object
 	
 func createMap():

@@ -1,4 +1,4 @@
-tool
+@tool
 extends Node
 
 var file
@@ -11,7 +11,7 @@ func _ready():
 func getStreamFromWAV(path):
 	file = load("res://addons/gldsrcBSP/DFile.gd").new()
 	if !file.loadFile(path):
-		return AudioStreamSample.new()
+		return AudioStreamWAV.new()
 		
 	fileDict["magic"] = file.get_String(4)
 	fileDict["chunkSize"] = file.get_32()
@@ -44,7 +44,7 @@ func getStreamFromWAV(path):
 	stream.loop_end = stream.data.size()
 	
 	if cueArr.size()>0:
-		stream.loop_mode = AudioStreamSample.LOOP_FORWARD
+		stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		stream.loop_begin = cueArr[0]
 		
 	if cueArr.size()>1:
@@ -69,13 +69,13 @@ func parseData():
 	fileDict["dataSize"] = file.get_32()
 	
 func createStream():
-	var stream = AudioStreamSample.new()
+	var stream = AudioStreamWAV.new()
 	stream.mix_rate = fileDict["sampleRate"]
 	if fileDict["numChannels"] > 1:
 		stream.stereo = true
 		
-	if fileDict["bitsPerSample"] == 8: stream.format = AudioStreamSample.FORMAT_8_BITS
-	if fileDict["bitsPerSample"] == 16: stream.format = AudioStreamSample.FORMAT_16_BITS
+	if fileDict["bitsPerSample"] == 8: stream.format = AudioStreamWAV.FORMAT_8_BITS
+	if fileDict["bitsPerSample"] == 16: stream.format = AudioStreamWAV.FORMAT_16_BITS
 	
 	var dataSize = fileDict["dataSize"]
 	var data = []

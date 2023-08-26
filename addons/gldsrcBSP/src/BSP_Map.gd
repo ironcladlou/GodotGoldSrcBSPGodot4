@@ -1,5 +1,5 @@
-tool
-extends Spatial
+@tool
+extends Node3D
 class_name GLDSRC_Map
 signal mapLoaded
 signal playerSpawnSignal(dict)
@@ -7,13 +7,13 @@ var file
 var directory = {}
 var spawns = []
 
-onready var imageBuilder = get_node("ImageBuilder")
-onready var levelBuilder = get_node("levelBuilder")
-onready var entityDataParser = get_node("entityDataParser")
-onready var bmlLoader = get_node("bmpLoader")
-onready var lightmapAtlas = get_node("lightmapAtlas")
+@onready var imageBuilder = get_node("ImageBuilder")
+@onready var levelBuilder = get_node("levelBuilder")
+@onready var entityDataParser = get_node("entityDataParser")
+@onready var bmlLoader = get_node("bmpLoader")
+@onready var lightmapAtlas = get_node("lightmapAtlas")
 var wadDict = {}
-#export(Array,String,FILE) var additionalWadDirs = [""]
+#@export(Array,String,FILE) var additionalWadDirs = [""]
 var vertices = []
 var planes = []
 var edges = []
@@ -41,12 +41,12 @@ var ligthMapOffset = null
 var lightMap = []
 var rawLightmap = []
 var entityDataArr = []
-export var importLightmaps = true
-export var optimize = true
-export var textureFilterSkyBox = true
-export var enableEntities = true
-export var disableSound = false
-export var textureLights = false
+@export var importLightmaps = true
+@export var optimize = true
+@export var textureFilterSkyBox = true
+@export var enableEntities = true
+@export var disableSound = false
+@export var textureLights = false
 
 var simpleCombine =  true
 var physicsPropsDontRotate = true
@@ -59,7 +59,7 @@ var modelRenderModes = {}
 var textureToMaterialDict = {}
 var skyTexture = "desert"
 var hlPath = null
-export var texturesPerMesh = 3
+@export var texturesPerMesh = 3
 
 var LUMP_NANES = [
 			"LUMP_ENTITES","LUMP_PLANES","LUMP_TEXTURES","LUMP_VERTICES","LUMP_VISIBILITY",
@@ -68,17 +68,17 @@ var LUMP_NANES = [
 			]
 
 
-export(String,FILE,GLOBAL) var path =  "Enter path to BSP here"
-export var scaleFactor = 0.05
-export var disableTextures = false
-export var textureFiltering = false
-export var cacheMaterials = true
+@export_global_file var path =  "Enter path to BSP here"
+@export var scaleFactor = 0.05
+@export var disableTextures = false
+@export var textureFiltering = false
+@export var cacheMaterials = true
 var collisions = true
-export var lights = false
+@export var lights = false
 func _ready():
 	
 	if !Engine.is_editor_hint():
-		if !find_node("Geometry"):
+		if !find_child("Geometry"):
 			createMap()
 
 	if get_node_or_null("spawns"):
@@ -133,7 +133,7 @@ func _physics_process(delta):
 	
 
 func loadBSP():
-	var a = OS.get_system_time_msecs()
+	var a = Time.get_ticks_msec()
 	file = load("res://addons/gldsrcBSP/DFile.gd").new()
 	path = path.replace("\\","/")
 	
@@ -143,8 +143,8 @@ func loadBSP():
 	
 	var filePath = path.replace("\\","/")
 
-	filePath = filePath.substr(0,filePath.find_last("/") )
-	filePath =  filePath.substr(0,filePath.find_last("/") )
+	filePath = filePath.substr(0,filePath.rfind("/") )
+	filePath =  filePath.substr(0,filePath.rfind("/") )
 	filePath = filePath + '/'
 	
 	
@@ -524,8 +524,8 @@ func fetchTexture(textureName,isDecal = false):
  
 func loadSound(fileName):
 	var dir = path
-	dir  = dir.substr(0,dir.find_last('/'))
-	dir  = dir.substr(0,dir.find_last('/'))
+	dir  = dir.substr(0,dir.rfind('/'))
+	dir  = dir.substr(0,dir.rfind('/'))
 	dir = dir + "/sound/" + fileName
 		
 	var stream = get_node("waveLoader").getStreamFromWAV(dir)
@@ -541,7 +541,7 @@ func createAudioPlayer3DfromName(fileName):
 	if fileName.find(".wav") == -1 or disableSound:
 		return AudioStreamPlayer3D.new()
 		
-	var stream : AudioStreamSample = loadSound(fileName) 
+	var stream : AudioStream = loadSound(fileName) 
 	var player = AudioStreamPlayer3D.new()
 	player.stream = stream
 	return player
@@ -551,7 +551,7 @@ func fetchMaterial(nameStr):
 	if !materialCache.has(nameStr) or !cacheMaterials:
 		materialCache[nameStr] = []
 		isFirstINstance = true
-		var mat = SpatialMaterial.new()
+		var mat = StandardMaterial3D.new()
 		
 		return {"material":mat,"isFirstInstance":isFirstINstance}
 	
@@ -562,12 +562,12 @@ func saveToMaterialCache(nameStr,mat):
 
 func readMaterialSounds():
 	var dir = path
-	dir  = dir.substr(0,dir.find_last('/'))
-	dir  = dir.substr(0,dir.find_last('/'))
+	dir  = dir.substr(0,dir.rfind('/'))
+	dir  = dir.substr(0,dir.rfind('/'))
 	var matPath = dir + "/sound/materials.txt"
-	var materialFile = File.new()
-	var result = materialFile.open(matPath,materialFile.READ)
-	if result != 0:
+	var materialFile: FileAccess
+	materialFile = materialFile.open(matPath,materialFile.READ)
+	if materialFile == null:
 		return
 	
 	var content = materialFile.get_as_text()
@@ -608,7 +608,7 @@ func lightMapToImage():
 
 func createSubNodes(arr):
 	for i in arr:
-		var node = Spatial.new()
+		var node = Node3D.new()
 		node.name = i
 		add_child(node)
 

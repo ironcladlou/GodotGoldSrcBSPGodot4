@@ -1,5 +1,5 @@
-tool
-extends Spatial
+@tool
+extends Node3D # TODOV4 Node3D???
 
 #var faces = []
 var edges
@@ -20,7 +20,7 @@ var hotFaces
 var renderModeFaces
 var skyMat = null
 var lightmapOffset = null
-var cubeMapShader = preload("res://addons/gldsrcBSP/cubemap.shader")
+var cubeMapShader = preload("res://addons/gldsrcBSP/cubemap.gdshader")
 var skyCubemap = null
 var atlasTexture : ImageTexture
 var atlasDim 
@@ -81,7 +81,7 @@ func _ready():
 func createLevel(dict,wadDict):
 
 	renderModeFaces = get_parent().renderModeFaces
-	geometryParentNode = Spatial.new()
+	geometryParentNode = Node3D.new()
 	geometryParentNode.name = "Geometry"
 	get_parent().add_child(geometryParentNode)
 	vertices = get_parent().vertices
@@ -96,20 +96,20 @@ func createLevel(dict,wadDict):
 	edgeToFaceIndexMap = get_parent().edgeToFaceIndexMap
 	lightmapOffset = get_parent().ligthMapOffset
 	#atlasTexture = get_parent().get_node("lightmapAtlas").getTexture()
-	var a = OS.get_system_time_msecs()
+	var a = Time.get_ticks_msec()
 	var atlasDict = get_parent().get_node("lightmapAtlas").initAtlas()
 	atlasDim = get_parent().get_node("lightmapAtlas").getSize()
 	atlasTexture = atlasDict["texture"]
 	var atlasRects = atlasDict["rects"]
 	
 	if get_parent().optimize == true:
-		#a = OS.get_system_time_msecs()
+		#a = Time.get_ticks_msec()
 		generateEdgeTrackerFaces()
 		#combineEdgeTracker()
-		#print("Generate edge tracker faces:", OS.get_system_time_msecs()-a)
+		#print("Generate edge tracker faces:", Time.get_ticks_msec()-a)
 		mergeBrushModelFaces3()
 
-	#a = OS.get_system_time_msecs()
+	#a = Time.get_ticks_msec()
 	var renderables= get_parent().renderables
 	
 	for faceIdx in renderables.size():
@@ -130,7 +130,7 @@ func createLevel(dict,wadDict):
 
 	#get_parent().get_node("lightmapAtlas").saveToFile()
 	
-	a = OS.get_system_time_msecs()
+	a = Time.get_ticks_msec()
 	if get_parent().collisions == true:
 		if get_parent().faceMeshNodes!= null:
 			for f in get_parent().faceMeshNodes.values():
@@ -138,11 +138,11 @@ func createLevel(dict,wadDict):
 					createCollisionsForMesh(f)
 	else:
 		for f in get_parent().faceMeshNodes.values():
-			var newParent = Spatial.new()
+			var newParent = Node3D.new()
 			newParent.add_child(f)
 			geometryParentNode.add_child(newParent)
 			
-	#print("collisions:",OS.get_system_time_msecs()-a)
+	#print("collisions:",Time.get_ticks_msec()-a)
 	if get_parent().textureLights:
 		textureLights()
 	
@@ -225,7 +225,7 @@ func createMeshFromFanArr(fans,faceIndex):
 	var surf: SurfaceTool = SurfaceTool.new()
 	var runningMesh = ArrayMesh.new()
 
-	var mat# : SpatialMaterial
+	var mat# : StandardMaterial3D
 	surf.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var count = 0
 	
@@ -303,10 +303,10 @@ func createMeshFromFanArr(fans,faceIndex):
 			if textureName!="SKY":
 				mat.albedo_texture = texture
 				if get_parent().importLightmaps:
-					mat.detail_uv_layer = SpatialMaterial.DETAIL_UV_2
+					mat.detail_uv_layer = StandardMaterial3D.DETAIL_UV_2
 					mat.detail_enabled = true
 					mat.detail_albedo = atlasTexture
-					mat.detail_blend_mode = SpatialMaterial.BLEND_MODE_MUL
+					mat.detail_blend_mode = StandardMaterial3D.BLEND_MODE_MUL
 		
 			runningMesh.surface_set_material(count,mat)
 			runningMesh.surface_set_name(count,textureName)
@@ -315,13 +315,13 @@ func createMeshFromFanArr(fans,faceIndex):
 
 	surf.commit(runningMesh)
 
-	var meshNode = MeshInstance.new()
+	var meshNode = MeshInstance3D.new()
 	meshNode.name = "face_mesh_" + String(faceIndex)
 	meshNode.mesh = runningMesh
 	
 	# Fix real-time light shadows by ensuring that even "hollow" faces cast shadows.
 	# This is enabled even when lightmap generation is used, as lightmaps and real-time lights can coexist.
-	meshNode.cast_shadow = MeshInstance.SHADOW_CASTING_SETTING_DOUBLE_SIDED
+	meshNode.cast_shadow = MeshInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
 
 	# Allow baking global illumination with GIProbe.
 	# BakedLightmap can't be used correctly since there is no UV2 generated.
@@ -345,7 +345,7 @@ func createMat(texture,textureName,render = null):
 	var matCacheName = textureName# + String(texInfo["fSShift"]) + String(texInfo["fTShift"])# + String(texInfo["vS"]) + String(texInfo["vT"])
 
 	var matDict = get_parent().fetchMaterial(matCacheName)
-	var mat : SpatialMaterial = matDict["material"]
+	var mat : StandardMaterial3D = matDict["material"]
 
 
 
@@ -384,7 +384,7 @@ func createMatSky():
 		bottom = rotImage(bottom,"bottom")
 		#var rect = Rect2(Vector2(-256,-256),Vector2(256,256))
 		#top.blit_rect(top,rect,Vector2(256,256))
-		skyCubemap = CubeMap.new()
+		skyCubemap = Cubemap.new()
 		if get_parent().textureFilterSkyBox == false:
 			skyCubemap.flags -= skyCubemap.FLAG_FILTER
 		skyCubemap.set_side(0,left)
@@ -428,20 +428,20 @@ func createCollisionsForMesh(meshNode):
 		var shape = staticBodyNode.get_child(0)
 		shape.get_parent().remove_child(shape)
 		staticBodyNode.queue_free()
-		staticBodyNode = KinematicBody.new()
+		staticBodyNode = CharacterBody3D.new()
 		staticBodyNode.add_child(shape)
 	
 	if meshNode.get_meta("textureName")[0]  == "!":
 		var shape = staticBodyNode.get_child(0)
 		shape.get_parent().remove_child(shape)
 		staticBodyNode.queue_free()
-		staticBodyNode = Area.new()
+		staticBodyNode = Area3D.new()
 		staticBodyNode.add_child(shape)
 	
 	meshNode.remove_child(staticBodyNode)
-	meshNode.name = "face" + String(theFaceIndex)
+	meshNode.name = "face" + str(theFaceIndex)
 	staticBodyNode.translation = center
-	  
+	
 	if meshNode.get_meta("textureName")[0]  == "!":
 		var scriptRes = load("res://addons/gldsrcBSP/funcScripts/water.gd")
 		staticBodyNode.set_script(scriptRes)
@@ -496,7 +496,7 @@ func projectToXYbasic(verts):
 	var Z = planeLine1.cross(planeLine2).normalized()
 	var Y = Z.cross(X).normalized()
 
-	var t = Transform(X,Y,Z,Vector3.ZERO)
+	var t = Transform3D(X,Y,Z,Vector3.ZERO)
 
 	for vert in verts:
 		out.append(t.xform_inv(vert))
@@ -673,7 +673,8 @@ func getBottomRightVert(verts):
 	var out = []
 
 	for v in verts:
-		out.append(transform.xform_inv(v))
+#		out.append(transform.basis_xform_inv(v)) # TODOV4
+		out.append((v))
 
 	var tl = getTopLeftVert(out)
 	for v in out.size():
@@ -901,8 +902,8 @@ func mergeBrushModelFaces3():
 
 
 func loadTGAasImage(path):
-	var file = File.new()
-	file.open(path,File.READ)
+	var file: FileAccess
+	file = FileAccess.open(path, FileAccess.READ)
 	var buffer = file.get_buffer(file.get_len())
 
 	var image = Image.new()
@@ -940,7 +941,7 @@ func textureLights():
 	return
 	var meshNodes = get_parent().faceMeshNodes
 	
-	var textureLightPar = Spatial.new()
+	var textureLightPar = Node3D.new()
 	textureLightPar.name = "Texture Lights"
 	get_parent().add_child(textureLightPar)
 	var oneshotDict = {}
@@ -953,7 +954,7 @@ func textureLights():
 			if rads.has(textureName):
 				
 				var color = rads[textureName]
-				var light = SpotLight.new()
+				var light = SpotLight3D.new()
 				var normal = f.get_meta("normal")
 				
 				#light.omni_range = 125
@@ -981,7 +982,7 @@ func textureLights():
 
 				#light.rotation_degrees.x += 90
 				#light.shadow_enabled = true
-				var indirectFake : OmniLight = OmniLight.new()
+				var indirectFake : OmniLight3D = OmniLight3D.new()
 				textureLightPar.add_child(indirectFake)
 				indirectFake.translation += f.global_transform.origin +  normal*get_parent().scaleFactor*10
 				indirectFake.omni_range = 10

@@ -1,4 +1,4 @@
-tool
+@tool
 extends Node
 
 var scaleFactor = 0.05
@@ -11,52 +11,52 @@ var postPostFuncBrushes = []
 
 
 
-onready var parse_ambient_generic: FuncRef = funcref(self,"parseAmbientGeneric")
-onready var parse_breakable: FuncRef = funcref(self,"parseBreakable")
-onready var parse_button: FuncRef = funcref(self,"parseButton")
-onready var parse_decal: FuncRef = funcref(self,"parseDecal")
-onready var parse_door: FuncRef = funcref(self,"parseDoor")
-onready var parse_door_rotating: FuncRef = funcref(self,"parseDoorRotating")
-onready var parse_env_glow: FuncRef = funcref(self,"parseEnvGlow")
-onready var parse_env_laser: FuncRef = funcref(self,"parseEnvLaser")
-onready var parse_env_sprite: FuncRef = funcref(self,"parseEnvSprite")
-onready var parse_func_bomb_target: FuncRef = funcref(self,"parseFuncBombTarget")
-onready var parse_func_buyzone: FuncRef = funcref(self,"parseFuncBuyzone")
-onready var parse_func_hostage_rescue: FuncRef = funcref(self,"parseFuncHostageRescue")
-onready var parse_illusionary: FuncRef = funcref(self,"parseIllusionary")
-onready var parse_info_player_start: FuncRef = funcref(self,"parseInfoPlayerStart")
-onready var parse_info_node: FuncRef = funcref(self,"nullFunction")
-onready var parse_ladder: FuncRef = funcref(self,"parseLadder")
-onready var parse_light: FuncRef = funcref(self,"parseLight")
-onready var parse_light_spot: FuncRef = funcref(self,"parseLightSpot")
-onready var parse_model: FuncRef = funcref(self,"parseModel")
-onready var parse_monster_clip: FuncRef = funcref(self,"parseMonsterClip")
-onready var parse_mutli_manager: FuncRef = funcref(self,"parseMultiManager")
-onready var parse_npc: FuncRef = funcref(self,"parseNpc")
-onready var parse_path_corner: FuncRef = funcref(self,"parsePathCorner")
-onready var parse_path_track: FuncRef = funcref(self,"parsePathTrack")
-onready var parse_pushable: FuncRef = funcref(self,"parsePushable")
-onready var parse_render_mode: FuncRef = funcref(self,"parseRenderMode")
-onready var parse_rot_button: FuncRef = funcref(self,"parseRotButton")
-onready var parse_rotating: FuncRef = funcref(self,"parseRotating")
-onready var parse_target_cd_audio: FuncRef = funcref(self,"parseTargetCDAudio")
-onready var parse_track_train: FuncRef = funcref(self,"parseTrackTrain")
-onready var parse_train: FuncRef = funcref(self,"parseTrain")
-onready var parse_trigger_auto: FuncRef = funcref(self,"parseTriggerAuto")
-onready var parse_trigger_auto_save: FuncRef = funcref(self,"parseTriggerAutoSave")
-onready var parse_trigger_cd_audio: FuncRef = funcref(self,"parseTriggerCDAudio")
-onready var parse_trigger_change_level: FuncRef = funcref(self,"parseTriggerChangeLevel")
-onready var parse_trigger_hurt:FuncRef = funcref(self,"parseTriggerHurt")
-onready var parse_trigger_multiple: FuncRef = funcref(self,"parseTriggerMultiple")
-onready var parse_trigger_once = funcref(self,"parseTriggerOnce")
-onready var parse_trigger_push: FuncRef = funcref(self,"parseTriggerPush")
-onready var parse_trigger_relay: FuncRef = funcref(self,"parseTriggerRelay")
-onready var parse_trigger_teleport: FuncRef = funcref(self,"parseTriggerTeleport")
-onready var parse_trigger_transition: FuncRef = funcref(self,"parseTriggerTransition")
-onready var parse_wall: FuncRef = funcref(self,"parseWall")
-onready var parse_wall_toggle: FuncRef = funcref(self,"parseWallToggle")
+@onready var parse_ambient_generic: Callable = Callable(self,"parseAmbientGeneric")
+@onready var parse_breakable: Callable = Callable(self,"parseBreakable")
+@onready var parse_button: Callable = Callable(self,"parseButton")
+@onready var parse_decal: Callable = Callable(self,"parseDecal")
+@onready var parse_door: Callable = Callable(self,"parseDoor")
+@onready var parse_door_rotating: Callable = Callable(self,"parseDoorRotating")
+@onready var parse_env_glow: Callable = Callable(self,"parseEnvGlow")
+@onready var parse_env_laser: Callable = Callable(self,"parseEnvLaser")
+@onready var parse_env_sprite: Callable = Callable(self,"parseEnvSprite")
+@onready var parse_func_bomb_target: Callable = Callable(self,"parseFuncBombTarget")
+@onready var parse_func_buyzone: Callable = Callable(self,"parseFuncBuyzone")
+@onready var parse_func_hostage_rescue: Callable = Callable(self,"parseFuncHostageRescue")
+@onready var parse_illusionary: Callable = Callable(self,"parseIllusionary")
+@onready var parse_info_player_start: Callable = Callable(self,"parseInfoPlayerStart")
+@onready var parse_info_node: Callable = Callable(self,"nullFunction")
+@onready var parse_ladder: Callable = Callable(self,"parseLadder")
+@onready var parse_light: Callable = Callable(self,"parseLight")
+@onready var parse_light_spot: Callable = Callable(self,"parseLightSpot")
+@onready var parse_model: Callable = Callable(self,"parseModel")
+@onready var parse_monster_clip: Callable = Callable(self,"parseMonsterClip")
+@onready var parse_mutli_manager: Callable = Callable(self,"parseMultiManager")
+@onready var parse_npc: Callable = Callable(self,"parseNpc")
+@onready var parse_path_corner: Callable = Callable(self,"parsePathCorner")
+@onready var parse_path_track: Callable = Callable(self,"parsePathTrack")
+@onready var parse_pushable: Callable = Callable(self,"parsePushable")
+@onready var parse_render_mode: Callable = Callable(self,"parseRenderMode")
+@onready var parse_rot_button: Callable = Callable(self,"parseRotButton")
+@onready var parse_rotating: Callable = Callable(self,"parseRotating")
+@onready var parse_target_cd_audio: Callable = Callable(self,"parseTargetCDAudio")
+@onready var parse_track_train: Callable = Callable(self,"parseTrackTrain")
+@onready var parse_train: Callable = Callable(self,"parseTrain")
+@onready var parse_trigger_auto: Callable = Callable(self,"parseTriggerAuto")
+@onready var parse_trigger_auto_save: Callable = Callable(self,"parseTriggerAutoSave")
+@onready var parse_trigger_cd_audio: Callable = Callable(self,"parseTriggerCDAudio")
+@onready var parse_trigger_change_level: Callable = Callable(self,"parseTriggerChangeLevel")
+@onready var parse_trigger_hurt:Callable = Callable(self,"parseTriggerHurt")
+@onready var parse_trigger_multiple: Callable = Callable(self,"parseTriggerMultiple")
+@onready var parse_trigger_once = Callable(self,"parseTriggerOnce")
+@onready var parse_trigger_push: Callable = Callable(self,"parseTriggerPush")
+@onready var parse_trigger_relay: Callable = Callable(self,"parseTriggerRelay")
+@onready var parse_trigger_teleport: Callable = Callable(self,"parseTriggerTeleport")
+@onready var parse_trigger_transition: Callable = Callable(self,"parseTriggerTransition")
+@onready var parse_wall: Callable = Callable(self,"parseWall")
+@onready var parse_wall_toggle: Callable = Callable(self,"parseWallToggle")
 
-onready var funcDict = {
+@onready var funcDict = {
 	"AMBIENT_GENERIC":parse_ambient_generic,
 	"FUNC_BREAKABLE":parse_breakable,
 	"FUNC_BUTTON":parse_button,
@@ -187,10 +187,10 @@ const TRAINSOUNDS = {
 }
 
 enum RENDERMODE {
-	color = 1
-	texture = 2
-	glow = 3
-	solid = 4
+	color = 1,
+	texture = 2,
+	glow = 3,
+	solid = 4,
 	additive = 5
 }
 
@@ -316,10 +316,10 @@ func parseInfoPlayerStart(dict):
 		var rotationTXT = dict["ANGLE"]
 		rot = int(rotationTXT)
 		#retDict["rotation"] = Vector3(cos(rot),0,sin(rot))*scaleFactor
-		retDict["rotation"] = Vector3(0,deg2rad(rot),0)
+		retDict["rotation"] = Vector3(0,deg_to_rad(rot),0)
 		
 	
-	var spawnPos = Spatial.new()
+	var spawnPos = Node3D.new()
 	spawnPos.translation = pos
 	spawnPos.rotation = retDict["rotation"]
 	spawnPos.name = String(get_parent().spawns.size())
@@ -352,7 +352,7 @@ func parseLight(dict):
 	g = 1
 	b = 1
 	var brush
-	var light = OmniLight.new()
+	var light = OmniLight3D.new()
 	
 	if dict.has("SPAWNFLAGS"):
 		light.visible = false
@@ -397,7 +397,7 @@ func parseLightSpot(dict):
 	
 		
 	var brush
-	var light = SpotLight.new()
+	var light = SpotLight3D.new()
 	
 	if dict.has("SPAWNFLAGS"):
 		light.visible = false
@@ -466,7 +466,7 @@ func sortEntityBrushesIntoNodes(dict):
 			targetFaceNodes.append(faceMeshNodes[f])
 			
 		
-		var brushNode = Spatial.new()
+		var brushNode = Node3D.new()
 		brush["node"] = brushNode
 		for i in targetFaceNodes:
 			var target = i.get_parent()
@@ -511,7 +511,7 @@ func parseDoor(dict):
 				targetNodeArr.append(faceMeshNodes[i].get_parent().name)
 	
 	var scriptRes = load("res://addons/gldsrcBSP/funcScripts/func_door.gd")
-	var doorComponent = Spatial.new()
+	var doorComponent = Node3D.new()
 	
 	doorComponent.set_meta("targetNodePaths",targetNodeArr)
 	doorComponent.set_meta("scaleFactor",scaleFactor)
@@ -543,7 +543,7 @@ func parseDoor(dict):
 		elif angle == -2:
 			angle = Vector3.DOWN
 		else:
-			angle = Vector3(-cos(deg2rad(angle)),0,sin(deg2rad(angle)))
+			angle = Vector3(-cos(deg_to_rad(angle)),0,sin(deg_to_rad(angle)))
 
 		
 		doorComponent.set_meta("angle",angle)
@@ -705,9 +705,9 @@ func parseTriggerRelay(dict):
 	
 	var delay = 0
 	if dict.has("DELAY"):
-	 delay = int(dict["DELAY"])
+		delay = int(dict["DELAY"])
 	var state = true
-	var node = Spatial.new()
+	var node = Node3D.new()
 	
 	if dict.has("TRIGGERSTATE"):
 		state = dict["TRIGGERSTATE"]
@@ -729,7 +729,7 @@ func parsePushable(dict):
 	var faceMeshNodes = get_parent().faceMeshNodes
 	var bushModelInfo = getModelInfoFromDict(dict)
 	var targetFaces = bushModelInfo["faceArr"] 
-	var rigidBody = RigidBody.new()
+	var rigidBody = RigidBody3D.new()
 	var originPos = faceMeshNodes[targetFaces[0]].get_parent().translation
 
 	rigidBody.translation = originPos
@@ -739,7 +739,7 @@ func parsePushable(dict):
 	for i in targetFaces: #for every static body of model
 		if faceMeshNodes.has(i):
 			
-			var meshNode : MeshInstance = faceMeshNodes[i]
+			var meshNode : MeshInstance3D = faceMeshNodes[i]
 			var bodyNode = meshNode.get_parent()
 			var parPos = meshNode.get_parent().translation
 			#bodyNode.remove_child(meshNode)#we remove mesh from StaticBody
@@ -810,7 +810,7 @@ func parseDoorRotating(dict):
 			targetNodeArr.append(faceMeshNodes[i].get_parent().name)
 	
 	var scriptRes = load("res://addons/gldsrcBSP/funcScripts/func_door_rotating.gd")
-	var doorComponent = Spatial.new()
+	var doorComponent = Node3D.new()
 	var uniqueParents = getUniqeParents(targetNodeArr)
 	
 	
@@ -940,7 +940,7 @@ func parseRotating(dict):
 			
 	
 	var scriptRes = load("res://addons/gldsrcBSP/funcScripts/func_rotating.gd")
-	var doorComponent = Spatial.new()
+	var doorComponent = Node3D.new()
 	var uniqueParents = getUniqeParents(targetNodeArr)
 	
 	doorComponent.set_meta("targetNodePaths",targetNodeArr)
@@ -983,7 +983,7 @@ func parseWall(dict):
 	#for i in targetFaces:
 		#targetNodeArr.append(faceMeshNodes[i])
 	#	var meshNode =  faceMeshNodes[i]
-	#	var mat = SpatialMaterial.new() godot glitch
+	#	var mat = Node3DMaterial.new() godot glitch
 		
 func parseDecal(dict):
 	
@@ -1197,12 +1197,12 @@ func parseTriggerCDAudio(dict):
 	if audioId <= 1:
 		return
 	
-	var file = File.new()
+#	var file = File.new()
 	var dir = get_parent().wadDict["baseDirectory"] + "media/"
 	dir = dir + CDAUDIO[int(dict["HEALTH"])]
 	var player = loadMP3asAudioPlayer(dir)
 	player.set_script(load("res://addons/gldsrcBSP/funcScripts/cdaudio.gd"))
-	var id = String(randi())
+	var id = str(randi())
 	get_parent().add_child(player)
 	player.add_to_group(id,true)
 	var scriptRes = load("res://addons/gldsrcBSP/funcScripts/trigger.gd")
@@ -1214,7 +1214,7 @@ func parseTriggerCDAudio(dict):
 	deleteModelNode(modelInfo)
 	
 func parseTargetCDAudio(dict):
-	var file = File.new()
+#	var file = File.new()
 	var dir = get_parent().wadDict["baseDirectory"] + "media/"
 	dir = dir + CDAUDIO[int(dict["HEALTH"])]
 	
@@ -1225,9 +1225,9 @@ func parseTargetCDAudio(dict):
 	get_parent().add_child(audioPlayer)
 
 func doesFileExist(path):
-	var fExist= File.new()
-	var doesExist = fExist.file_exists(path)
-	fExist.close()
+#	var fExist= File.new()
+	var doesExist = FileAccess.file_exists(path)
+#	fExist.close()
 	return doesExist
 	
 
@@ -1250,18 +1250,18 @@ func parseEnvSprite(dict):
 	
 	if dict.has("FRAMERATE"): img.fps = int(dict["FRAMERATE"])
 	sprite.scale *= 100*scaleFactor
-	sprite.billboard = SpatialMaterial.BILLBOARD_ENABLED
+	sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	sprite.texture = img
 	sprite.translation = textToVector3(dict["ORIGIN"])
 	sprite.name = spriteName
 	
 	if renderMode == 3 or renderMode == 5: 
-		var mat = SpatialMaterial.new()
-		mat.params_blend_mode = SpatialMaterial.BLEND_MODE_ADD
+		var mat = StandardMaterial3D.new()
+		mat.params_blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 		mat.albedo_texture = img
 		mat.flags_unshaded = true
 		mat.flags_do_not_receive_shadows = true
-		mat.params_billboard_mode = SpatialMaterial.BILLBOARD_ENABLED
+		mat.params_billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 		mat.params_billboard_keep_scale = true
 		sprite.material_override = mat
 	
@@ -1281,18 +1281,18 @@ func parseEnvGlow(dict):
 	var sprite : Sprite3D = Sprite3D.new()
 	
 	sprite.scale *= 100*scaleFactor
-	sprite.billboard = SpatialMaterial.BILLBOARD_ENABLED
+	sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	sprite.texture = img
 	sprite.translation = textToVector3(dict["ORIGIN"])
 	sprite.name = spriteName
 	
 	if renderMode == 3 or renderMode == 5: 
-		var mat = SpatialMaterial.new()
-		mat.params_blend_mode = SpatialMaterial.BLEND_MODE_ADD
+		var mat = StandardMaterial3D.new()
+		mat.params_blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 		mat.albedo_texture = img
 		mat.flags_unshaded = true
 		mat.flags_do_not_receive_shadows = true
-		mat.params_billboard_mode = SpatialMaterial.BILLBOARD_ENABLED
+		mat.params_billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 		mat.params_billboard_keep_scale = true
 		sprite.material_override = mat
 	
@@ -1316,7 +1316,7 @@ func parseEnvLaser(dict):
 	var targetNode = get_tree().get_nodes_in_group(targetName)[0]
 	
 	sprite.scale *= scaleFactor
-	sprite.billboard = SpatialMaterial.BILLBOARD_ENABLED
+	sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	sprite.texture = img
 	sprite.translation = textToVector3(dict["ORIGIN"])
 	sprite.name = spriteName
@@ -1339,9 +1339,9 @@ func getUniqeParents(targetNodes):
 
 
 func createInteractionAreaNode(model,growMargin = 0,nameStr ="interactionBox"):
-	var areaNode = Area.new()
-	var collisionNode = CollisionShape.new()
-	var shapeNode = BoxShape.new()
+	var areaNode = Area3D.new()
+	var collisionNode = CollisionShape3D.new()
+	var shapeNode = BoxShape3D.new()
 	
 	var BBMin = model["BBMin"]
 	var BBMax = model["BBMax"]
@@ -1476,7 +1476,7 @@ func parseMultiManager(dict):
 	
 
 func parsePathCorner(dict):
-	var node = Position3D.new()
+	var node = Marker3D.new()
 	node.translation = textToVector3(dict["ORIGIN"])
 	node.name = dict["TARGETNAME"]
 	if dict.has("TARGET"):
@@ -1491,7 +1491,7 @@ func parsePathCorner(dict):
 	get_parent().add_child(node)
 
 func parsePathTrack(dict):
-	var node = Position3D.new()
+	var node = Marker3D.new()
 	node.translation = textToVector3(dict["ORIGIN"])
 	node.name = dict["TARGETNAME"]
 	if dict.has("TARGET"):
@@ -1545,7 +1545,7 @@ func parseTrain(dict):
 			targetNodeArr.append(faceMeshNodes[i].get_parent().name)
 	
 	var scriptRes = load("res://addons/gldsrcBSP/funcScripts/func_train.gd")
-	var trainNode= Spatial.new()
+	var trainNode= Node3D.new()
 
 	trainNode.set_meta("targetNodePaths",targetNodeArr)
 	trainNode.set_meta("path",pathArr)
@@ -1596,10 +1596,10 @@ func parseTrackTrain(dict):
 				pathArr.append(b)
 				break
 	
-	var path = Path.new()
+	var path = Path3D.new()
 	var tarr = []
 	for i in pathArr:
-		var node : Position3D = (get_parent().find_node(i,true,false))
+		var node : Marker3D = (get_parent().find_node(i,true,false))
 		if node.has_meta("trigger"):
 			var triggerName = node.get_meta("trigger")
 			
@@ -1613,10 +1613,10 @@ func parseTrackTrain(dict):
 		
 		
 		
-	path.add_child(PathFollow.new())
+	path.add_child(PathFollow3D.new())
 	get_parent().add_child(path)
 	var scriptRes = load("res://addons/gldsrcBSP/funcScripts/func_track_train.gd")
-	var trainNode= Spatial.new()
+	var trainNode= Node3D.new()
 
 	if dict.has("SOUNDS"):
 		sound = int(dict["SOUNDS"])
@@ -1639,7 +1639,7 @@ func parseAmbientGeneric(dict):
 		return
 	var par = get_parent().get_node_or_null("Ambient Sounds")
 	if par == null:
-		par = Spatial.new()
+		par = Node3D.new()
 		par.name = "Ambient Sounds"
 		get_parent().add_child(par)
 	
@@ -1772,8 +1772,8 @@ func guessWadPath(path):
 		return null
 
 func loadMP3asAudioPlayer(path):
-	var file = File.new()
-	file.open(path,File.READ)
+	var file: FileAccess
+	file = FileAccess.open(path,FileAccess.READ)
 	var data = file.get_buffer(file.get_len())
 	file.close()
 	var mp3 = AudioStreamMP3.new()

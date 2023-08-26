@@ -1,4 +1,4 @@
-extends Spatial
+extends Node3D
 
 
 var active = false
@@ -8,7 +8,7 @@ var inc = Vector3.ZERO
 var lip = 0
 var rot = Vector3(0,0,0)
 var dir = Vector3.ZERO
-var rotAmount = deg2rad(90)
+var rotAmount = deg_to_rad(90)
 var origin = Vector3.ZERO
 var rotDir = 1
 var rotInc = 0
@@ -20,7 +20,7 @@ func _ready():
 	
 	origin = get_meta("origin")
 	scaleFactor = get_meta("scaleFactor")
-	rotAmount = deg2rad(get_meta("rotAmount"))
+	rotAmount = deg_to_rad(get_meta("rotAmount"))
 	moveSound = get_node_or_null("moveSound")
 	axis = get_meta("axis")
 
@@ -35,9 +35,9 @@ func _ready():
 	
 	if has_meta("angles"):
 		rot = get_meta("angles")
-		var yaw = deg2rad(rot.x)
-		var pitch = deg2rad(rot.y)
-		var roll = deg2rad(rot.z)
+		var yaw = deg_to_rad(rot.x)
+		var pitch = deg_to_rad(rot.y)
+		var roll = deg_to_rad(rot.z)
 		
 		dir.y = -cos(yaw)*sin(pitch)*sin(roll)-sin(yaw)*cos(roll)
 		dir.x = -sin(yaw)*sin(pitch)*sin(roll)+cos(yaw)*cos(roll)
@@ -79,7 +79,7 @@ func _physics_process(delta):
 			
 
 			pass
-		rotInc +=  deg2rad(1)
+		rotInc += deg_to_rad(1)
 		get_node("interactionBox").translation = Vector3.ZERO
 		
 		if axis.x == 1: 

@@ -1,5 +1,5 @@
-tool
-extends Spatial
+@tool
+extends Node3D
 
 
 var active = false
@@ -23,7 +23,7 @@ var angle
 var moveSound 
 var lockedSound
 var target = null
-var open = false
+var isOpen = false
 func _ready():
 	
 	#if name == "G_DOOR":
@@ -49,9 +49,9 @@ func _ready():
 
 	if has_meta("angles"):
 		rot = get_meta("angles")
-		var yaw = deg2rad(rot.x)
-		var pitch = deg2rad(rot.y)
-		var roll = deg2rad(rot.z)
+		var yaw = deg_to_rad(rot.x)
+		var pitch = deg_to_rad(rot.y)
+		var roll = deg_to_rad(rot.z)
 		
 		dir.y = -(-cos(yaw)*sin(pitch)*sin(roll)-sin(yaw)*cos(roll))
 		dir.x = -(-sin(yaw)*sin(pitch)*sin(roll)+cos(yaw)*cos(roll))

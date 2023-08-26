@@ -1,4 +1,4 @@
-extends Spatial
+extends Node3D
 
 
 func changeMap(strName):
@@ -11,7 +11,7 @@ func changeMap(strName):
 	
 	
 	
-	dir = dir.substr(0,dir.find_last("/"))
+	dir = dir.substr(0,dir.rfind("/"))
 	#var dir = $"BSP_Map".path.find_last("\")
 	bspMap.path = dir + "/" + strName + ".bsp"
 	bspMap.name = "BSP_Map"

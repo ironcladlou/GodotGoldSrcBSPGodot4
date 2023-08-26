@@ -1,4 +1,4 @@
-extends Spatial
+extends Node3D
 
 var targetNodes = []
 var pathName = []

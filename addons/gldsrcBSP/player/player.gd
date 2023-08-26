@@ -1,28 +1,28 @@
-extends KinematicBody
+extends CharacterBody3D
 
-export var speed = 15
+@export var speed = 15
 var mouseSensitivity = 0.05
 var direction = Vector3()
 var accHor = Vector3()
 var hp = 100
 var dead = false
-export var gravity = 1
-export(NodePath) var bspNodePath = null
+@export var gravity = 1
+@export_node_path var bspNodePath = null
 var jumpSpeed = 0.5
 
 var initalGravity = gravity
 var gravityVelo = Vector3()
 var onGround = false
 var jumpSound = false
-onready var colShape = $"CollisionShape"
-onready var camera = $"Camera"
-onready var footCast = $"footCast"
-onready var initialShapeDim = Vector2(colShape.shape.radius,colShape.shape.height)
-onready var lastStep = translation
-onready var lastMat = "-"
-onready var footstepSound = $"footstepSound"
-onready var bspNode = get_node(bspNodePath)
-onready var shootCast = $"Camera/shootCast"
+@onready var colShape = $"CollisionShape"
+@onready var camera = $"Camera"
+@onready var footCast = $"footCast"
+@onready var initialShapeDim = Vector2(colShape.shape.radius,colShape.shape.height)
+@onready var lastStep = position
+@onready var lastMat = "-"
+@onready var footstepSound = $"footstepSound"
+@onready var bspNode = get_node(bspNodePath)
+@onready var shootCast = $"Camera/shootCast"
 
 var footStepDict = {
 	"C":["player/pl_step1.wav","player/pl_step2.wav"],
@@ -43,7 +43,7 @@ var footStepDict = {
 var cachedSounds = {}
 
 func _ready():
-	var err = bspNode.connect("playerSpawnSignal",self,"setSpawn")
+	var err = bspNode.connect("playerSpawnSignal", setSpawn)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
@@ -51,9 +51,9 @@ func _input(event):
 	if dead:
 		return
 	if event is InputEventMouseMotion:
-		rotate_y(deg2rad(-event.relative.x * mouseSensitivity))
-		camera.rotate_x(deg2rad(-event.relative.y * mouseSensitivity))
-		camera.rotation.x = clamp(camera.rotation.x, deg2rad(-89),deg2rad(89))
+		rotate_y(deg_to_rad(-event.relative.x * mouseSensitivity))
+		camera.rotate_x(deg_to_rad(-event.relative.y * mouseSensitivity))
+		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-89),deg_to_rad(89))
 
 func _physics_process(delta):
 	#cameraStuff()
@@ -109,9 +109,15 @@ func _physics_process(delta):
 		
 
 	direction += gravityVelo
-	move_and_slide(direction*speed,Vector3.UP,false,4,0.758,false)
+	# TODOV4 set floor normal? Vector3.UP
+	floor_stop_on_slope = false
+	velocity = direction*speed
+	max_slides = 4
+	floor_max_angle = 0.758
+	# TODOV4 set infinite_inertia? false
+	move_and_slide()
 	
-	for index in get_slide_count():
+	for index in get_slide_collision_count():
 		var collision = get_slide_collision(index)
 	
 		if collision.collider.get_class() == "RigidBody":
@@ -120,7 +126,7 @@ func _physics_process(delta):
 	
 func setSpawn(dict):
 	#print(dict)
-	translation = dict["pos"]
+	position = dict["pos"]
 	rotation_degrees.y = dict["rot"]+90
 
 	
@@ -136,7 +142,7 @@ func exitLadder():
 func die():
 	if dead:
 		return
-	camera.rotate_z(deg2rad(90))
+	camera.rotate_z(deg_to_rad(90))
 	dead = true
 	colShape.shape.radius = initialShapeDim.x * 0.01
 	colShape.shape.height = initialShapeDim.y * 0.01
@@ -159,12 +165,12 @@ func footsteps():
 	
 	
 	if footStepDict.has(matType):
-		if translation.distance_to(lastStep) < 2 and lastMat == matType:  
+		if position.distance_to(lastStep) < 2 and lastMat == matType:  
 			lastMat = matType
 			return
 		
 		lastMat = matType
-		lastStep = translation
+		lastStep = position
 		
 		playMatStepSound(matType)
 
@@ -220,7 +226,7 @@ func shoot():
 			collider.takeDamage
 		
 func cameraStuff():
-	var ninety  = deg2rad(90)
+	var ninety  = deg_to_rad(90)
 	var rotY = rotation.y + ninety
 	#LineDraw.drawLine(translation,translation+Vector3(cos(rotY),0,-sin(rotY))*10)#
 	
@@ -229,6 +235,6 @@ func cameraStuff():
 	var y = sin(camera.rotation.x)
 	var z = -sin(rotY)*cos(camera.rotation.x)
 	
-	var origin = translation
+	var origin = position
 	#LineDraw.drawLine(origin,origin+Vector3(x,y,z)*100)#
 	

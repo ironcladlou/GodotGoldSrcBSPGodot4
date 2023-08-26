@@ -3,10 +3,10 @@ extends Sprite3D
 
 
 var flag = true
-var ready = false
+var isReady = false
 var tickWait = 0
 func _ready():
-	ready = true
+	isReady = true
 	get_node("Area/CollisionShape").shape.radius = 0.10
 	
 	pass # Replace with function body.
@@ -22,7 +22,7 @@ func _physics_process(delta):
 	
 func checkCasts():
 	var closest = {"object":null,"distance":INF,"contactNormal":Vector3.ZERO}
-	var area  : KinematicBody= get_node("Area")
+	var area  : CharacterBody3D= get_node("Area")
 	var collision = area.move_and_collide(Vector3.ZERO)
 	if collision!= null:
 		var collider = collision.collider
@@ -34,7 +34,7 @@ func checkCasts():
 			var ang = acos(v1.dot(v2))
 			var rotAxis = v1.cross(v2).normalized()
 			rotate(rotAxis.normalized(),ang)
-			translation += collision.normal*0.01
+			position += collision.normal*0.01
 		else:
 			queue_free()
 	else:

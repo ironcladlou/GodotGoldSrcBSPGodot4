@@ -1,4 +1,4 @@
-extends Light
+extends Light3D
 
 func setState(state):
 	visible = state

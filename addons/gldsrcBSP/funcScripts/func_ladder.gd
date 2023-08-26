@@ -1,8 +1,8 @@
-extends Area
+extends Area3D
 
 func _ready():
-	self.connect("body_entered",self,"_on_ladder_body_entered")
-	self.connect("body_exited",self,"_on_ladder_body_exited")
+	self.connect("body_entered", _on_ladder_body_entered)
+	self.connect("body_exited", _on_ladder_body_exited)
 	
 
 

@@ -1,4 +1,4 @@
-tool
+@tool
 extends Node
 var file
 var textures = []
@@ -63,9 +63,9 @@ func mdlParse(path):
 	if fileDict["numTextures"] == 0:
 		var searchPath = path.split(".")[0]
 		searchPath = searchPath + "t.mdl"
-		var fExist= File.new()
-		var doesExist = fExist.file_exists(searchPath)
-		fExist.close()
+#		var fExist= File.new()
+		var doesExist = FileAccess.file_exists(searchPath)
+#		fExist.close()
 			
 		if doesExist:
 			var textureParse = Node.new()
@@ -131,7 +131,7 @@ func saveScene():
 	
 	var packed_scene = PackedScene.new()
 	packed_scene.pack(self)
-	ResourceSaver.save(String(i) + ".tscn", packed_scene)
+	ResourceSaver.save(packed_scene, str(i) + ".tscn")
 	#	i+= 1
 	print("saved")
 
@@ -311,9 +311,9 @@ func parseBone():
 	boneDict["rot"] = getVectorXZY(file)
 	boneDict["scaleP"] = getVectorXZY(file)
 	boneDict["scaleR"] = getVectorXZY(file)
-	boneDict["index"] = String(boneIndex)
-	boneDict["transform"] = Transform.IDENTITY
-	var sphere = CSGSphere.new()
+	boneDict["index"] = str(boneIndex)
+	boneDict["transform"] = Transform3D.IDENTITY
+	var sphere = CSGSphere3D.new()
 	
 	#boneDict["rot"] = Vector3(-boneDict["rot"].x,boneDict["rot"].z,boneDict["rot"].y)
 
@@ -395,7 +395,7 @@ func parseModel(offset):
 		#	var cur = [v[j*3],v[j*3+1],v[j*3+2]]
 		#	add_child(createMesh(cur))
 	
-	var meshNode = MeshInstance.new()
+	var meshNode = MeshInstance3D.new()
 	meshNode.mesh = runningMesh
 	meshNode.name = "hello"
 	return meshNode
@@ -463,7 +463,7 @@ func createMeshFromFan(vertices):
 	
 	surf.add_triangle_fan(triVerts,[],[],[],[])
 	surf.commit(mesh)
-	var meshNode = MeshInstance.new()
+	var meshNode = MeshInstance3D.new()
 	meshNode.mesh = mesh
 
 	return meshNode
@@ -480,7 +480,8 @@ func createMesh(vertices,normals,type,uv,boneIndices,textureIndex,runningMesh=nu
 	
 	
 	if type == 1: surf.begin((Mesh.PRIMITIVE_TRIANGLE_STRIP))
-	if type == -1: surf.begin((Mesh.PRIMITIVE_TRIANGLE_FAN))
+	if type == -1: surf.begin((Mesh.PRIMITIVE_TRIANGLE_STRIP))
+#	if type == -1: surf.begin((Mesh.PRIMITIVE_TRIANGLE_FAN))
 	
 	surf.set_material(mat)
 	
@@ -521,7 +522,7 @@ func createMesh(vertices,normals,type,uv,boneIndices,textureIndex,runningMesh=nu
 
 func createMat(textureIndex):
 	#print(textureIndex)
-	var mat = SpatialMaterial.new()
+	var mat = StandardMaterial3D.new()
 	if textures == null:
 		return mat
 	
@@ -548,7 +549,7 @@ func boneHier2():
 				bone["children"].append(b2Index)
 	
 	#var rootBone = bones[1]
-	boneItt2(0,Transform.IDENTITY)
+	boneItt2(0,Transform3D.IDENTITY)
 
 func boneItt2(index,runningTransform):
 	if index == 0:
@@ -557,7 +558,7 @@ func boneItt2(index,runningTransform):
 		var scaleR = bones[index]["scaleR"]
 		bones[index]["sumPos"] = bonePos
 		
-		var localTransform = Transform.IDENTITY
+		var localTransform = Transform3D.IDENTITY
 		localTransform = localTransform.translated(bonePos)
 		localTransform.basis = localTransform.basis.rotated(Vector3(1,0,0),boneRot.x)
 		localTransform.basis = localTransform.basis.rotated(Vector3(0,1,0),boneRot.y)
@@ -574,7 +575,7 @@ func boneItt2(index,runningTransform):
 		var bonePos = bones[cIndex]["pos"]
 		
 		
-		var localTransform = Transform.IDENTITY
+		var localTransform = Transform3D.IDENTITY
 		localTransform = localTransform.translated(bonePos)
 		localTransform.basis = localTransform.basis.rotated(Vector3(1,0,0),boneRot.x)
 		localTransform.basis = localTransform.basis.rotated(Vector3(0,1,0),boneRot.y)

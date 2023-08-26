@@ -6,11 +6,12 @@ var data
 var pos = 0
 	
 func loadFile(path):
-	var file = File.new()
-	if file.open(path,File.READ) != 0:
+	var file: FileAccess
+	file = FileAccess.open(path,FileAccess.READ)
+	if file == null:
 		#print("Error opening file:",path)
 		return false
-	data = file.get_buffer(file.get_len())
+	data = file.get_buffer(file.get_length())
 	
 	file.close()
 	return true
