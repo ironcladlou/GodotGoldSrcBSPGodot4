@@ -185,8 +185,7 @@ func parseTexture():
 	
 	image.unlock()
 	
-	var texture = ImageTexture.new()
-	texture.create_from_image(image)
+	var texture = ImageTexture.create_from_image(image)
 	if true:
 		texture.flags -= texture.FLAG_FILTER
 		

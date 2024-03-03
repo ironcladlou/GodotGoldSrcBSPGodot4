@@ -42,9 +42,9 @@ var lightMap = []
 var rawLightmap = []
 var entityDataArr = []
 @export var importLightmaps = true
-@export var optimize = true
+@export var optimize = false
 @export var textureFilterSkyBox = true
-@export var enableEntities = true
+@export var enableEntities = false
 @export var disableSound = false
 @export var textureLights = false
 
@@ -68,11 +68,11 @@ var LUMP_NANES = [
 			]
 
 
-@export_global_file var path =  "Enter path to BSP here"
+@export_global_file var path =  "/Users/dan/Downloads/Action_Half-Life/Directors Cut Release Candidate 2/action/maps/ahlg_actionrail_dc.bsp"
 @export var scaleFactor = 0.05
 @export var disableTextures = false
 @export var textureFiltering = false
-@export var cacheMaterials = true
+@export var cacheMaterials = false
 var collisions = true
 @export var lights = false
 func _ready():
@@ -94,7 +94,7 @@ func _ready():
 
 
 func createMap():
-	#print("---creating map---")
+	print("importing map %s" % path)
 	levelBuilder = get_node("levelBuilder")
 	entityDataParser = get_node("entityDataParser")	
 	imageBuilder = get_node("ImageBuilder")
@@ -104,15 +104,20 @@ func createMap():
 	lightNodes = get_node("Lights")
 	brushNodes = get_node("BrushEntities")
 	
+	print("loading bsp")
 	if loadBSP() == false:
 		print("failed to load BSP file")
 		deleteSubNodes(["Lights","BrushEntities","triggers","decals"])
 		return
 	
-	
-	levelBuilder.createLevel(directory,wadDict)
-	
+	print("loaded bsp")
 
+	print("creating level")
+	if levelBuilder.createLevel(directory,wadDict) == false:
+		print("failed to create level")
+		return
+	
+	print("finished creating level")
 	
 	if enableEntities == false:
 		set_meta("done",true)
@@ -120,7 +125,6 @@ func createMap():
 	
 	for i in entityDataArr:
 		entityDataParser.parseEntityData2(i)
-	
 	
 	entityDataParser.doRenderModes2()
 	set_meta("done",true)
@@ -137,10 +141,12 @@ func loadBSP():
 	file = load("res://addons/gldsrcBSP/DFile.gd").new()
 	path = path.replace("\\","/")
 	
+	print("loading bsp from normalized path %s" % path)
 	if !file.loadFile(path):
-		print("file not found:", path)
+		print("failed to open file")
 		return false
 	
+	print("successfully loaded file")
 	var filePath = path.replace("\\","/")
 
 	filePath = filePath.substr(0,filePath.rfind("/") )
@@ -162,42 +168,48 @@ func loadBSP():
 		directory[lumpName]["length"] = file.get_32u()
 		pass
 	
-	#a = OS.get_system_time_msecs()
 	parse_texinfo(directory["LUMP_TEXINFO"])
-	#print("texinf:",OS.get_system_time_msecs()-a)
-	#a = OS.get_system_time_msecs()
+	print("parse_texinfo finished")
+	
 	parse_texture(directory["LUMP_TEXTURES"])
-	#print("texture:",OS.get_system_time_msecs()-a)
-	#a = OS.get_system_time_msecs()
+	print("parse_texture finished")
+	
 	parse_vertices(directory["LUMP_VERTICES"])
-	#print("vertices:",OS.get_system_time_msecs()-a)
-	#a = OS.get_system_time_msecs()
+	print("parse_vertices finished")
+	
 	parse_planes(directory["LUMP_PLANES"])
-	#print("planes:",OS.get_system_time_msecs()-a)
-	#a = OS.get_system_time_msecs()
+	print("parse_planes finished")
+	
 	parse_edges(directory[ "LUMP_EDGES"])
-	#print("edges:",OS.get_system_time_msecs()-a)
-	#a = OS.get_system_time_msecs()
+	print("parse_edges finished")
+
 	parse_surfedges(directory["LUMP_SURFEDGES"])
-	#print("surfedges:",OS.get_system_time_msecs()-a)
-	#a = OS.get_system_time_msecs()
+	print("parse_surfedges finished")
+	
 	parseLightmap(directory["LUMP_LIGHTING"])
-	#print("lightmap:",OS.get_system_time_msecs()-a)
-	#a = OS.get_system_time_msecs()
+	print("parse_lightmap finished")
+	
 	parse_faces(directory["LUMP_FACES"])
-	#print("faces:",OS.get_system_time_msecs()-a)
-	#a = OS.get_system_time_msecs()
+	print("parse_faces finished")
+	
 	parse_models(directory["LUMP_MODELS"])
-	#print("models:",OS.get_system_time_msecs()-a)
-	#a = OS.get_system_time_msecs()
-	parse_entites(directory["LUMP_ENTITES"])
-	#print("entities:",OS.get_system_time_msecs()-a)
+	print("parse_models finished")
+
+	if enableEntities:
+		parse_entites(directory["LUMP_ENTITES"])
+		print("parse_entites finished")
+	else:
+		print("skipping parse_entities")
 	
+	# TODO(dan): This was already commented out
 	#lightMapToImage()
-	readMaterialSounds()
-	#print("parse time:",OS.get_system_time_msecs()-a)
-	return true
 	
+	if !readMaterialSounds():
+		print("failed to read material sounds")
+		return false	
+	print("finished readMaterialSounds")
+	
+	return true
 
 	
 func parse_entites(lumpDict):
@@ -288,6 +300,7 @@ func parse_faces(facesDict):
 	file.seek(facesDict["offset"])
 	var size = facesDict["length"]
 	var index = 0
+	print("parsing faces, size = %s" % size)
 	for i in size/(12+4+4):
 		var dict = {}
 		var planeIndex  = file.get_16()
@@ -351,9 +364,12 @@ func parse_faces(facesDict):
 			uvs.append(texProject(v,texInfo))
 			lightmapUV.append(texProject(v,texInfo))
 			
-			
 		
 		var lImage = lightmapFunc(uvs,lightmapOffset,lightmapUV)
+		if lImage == null:
+			print("failed to create lImage, aborting")
+			return
+
 		var lightmapPos = get_node("lightmapAtlas").addToAtlas2(lImage,index)
 		var uvOffset = Vector2(texInfo["fSShift"],texInfo["fTShift"])
 		var f = {}
@@ -547,6 +563,9 @@ func createAudioPlayer3DfromName(fileName):
 	return player
 
 func fetchMaterial(nameStr):
+	# TODO(dan): caching seems broken?
+	return {"material": StandardMaterial3D.new(), "isFirstInstance": true}
+	
 	var isFirstINstance = false
 	if !materialCache.has(nameStr) or !cacheMaterials:
 		materialCache[nameStr] = []
@@ -565,26 +584,31 @@ func readMaterialSounds():
 	dir  = dir.substr(0,dir.rfind('/'))
 	dir  = dir.substr(0,dir.rfind('/'))
 	var matPath = dir + "/sound/materials.txt"
-	var materialFile: FileAccess
-	materialFile = materialFile.open(matPath,materialFile.READ)
+	var materialFile = FileAccess.open(matPath,FileAccess.READ)
 	if materialFile == null:
+		print("material file %s not found, aborting material sounds processing" % matPath)
 		return
 	
 	var content = materialFile.get_as_text()
 	content = content.split("\n")
-	
 		
 	for line in content:
+		line = line.rstrip("\n").rstrip("\r")
 		if line.length() == 0:
 			continue
 		if line[0] == "/":
 			continue
-		line = line.split(" ")
-		var matType = line[0]
-		var textureName = line[1]
+		var splitLine = line.split(" ")
+		if splitLine.size() != 2:
+			print("invalid material line: %s, len=%d" % [line, line.length()])
+			return false
+		var matType = splitLine[0]
+		var textureName = splitLine[1]
 		textureToMaterialDict[textureName] = matType
 	#	if textures.has(textureName):
 		#	breakpoint
+	
+	return true
 
 func lightMapToImage():
 	return
@@ -685,10 +709,8 @@ func texProject2(vert,texInfo):
 	return Vector2(u,v)
 
 func lightmapFunc(vertsUV,ligthmapDataOffset,lightmapuv):
-	
 	var mins = Vector2(INF,INF)
 	var maxs = Vector2(-INF,-INF)
-	
 	
 	for i in vertsUV:
 		if i.x < mins.x : mins.x = i.x
@@ -702,21 +724,17 @@ func lightmapFunc(vertsUV,ligthmapDataOffset,lightmapuv):
 	var maxs16 = (maxs/16).ceil()
 	var mins16 = (mins/16).floor()
 	
-
-	
-	
-	
 	var lightMapDim = (maxs16 - mins16)+Vector2(1,1)
 
 	var texturel = createLightMapTexture(lightMapDim,ligthmapDataOffset)
-	
-	
+	if texturel == null:
+		print("failed to create lightmap texture")
+		return null
 	
 	#lightmapuv.resize(vertsUV.size())
 	for i in vertsUV.size():
 		lightmapuv[i] = (vertsUV[i] - mins)/ uvDim
 		#lightmapuv[i] -= lightmapuv[i]*0.001
-	
 	
 	return texturel
 
@@ -727,10 +745,12 @@ func createLightMapTexture(dim,offset):
 	var h = dim.y
 	#var rawLightmap = rawLightmap
 	
-	var image : Image = Image.new()
-	image.create(dim.x,dim.y,false,Image.FORMAT_RGB8)
+	var image : Image = Image.create(dim.x,dim.y,false,Image.FORMAT_RGB8)
+	if image.get_width() == 0 or image.get_height() == 0:
+		print("invalid image dimensions, dim.x=%d, dim.y=%d, offset=%d" % [dim.x, dim.y, offset])
+		return null
+		
 	var fmt = image.get_format()
-	image.lock()
 	var i = 0
 	
 	for y in h:
@@ -743,7 +763,6 @@ func createLightMapTexture(dim,offset):
 			
 			image.set_pixel(x,y,color)
 
-	image.unlock()
 	#var rect = Rect2(Vector2(0.5,0.5),image.get_size()-Vector2(0.5,0.5))
 	#image = image.get_rect(rect)
 	

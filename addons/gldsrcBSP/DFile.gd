@@ -9,11 +9,13 @@ func loadFile(path):
 	var file: FileAccess
 	file = FileAccess.open(path,FileAccess.READ)
 	if file == null:
-		#print("Error opening file:",path)
+		print("error opening file: %s" % FileAccess.get_open_error())
 		return false
-	data = file.get_buffer(file.get_length())
+	var len = file.get_length()
+	data = file.get_buffer(len)
 	
 	file.close()
+	print("read %s bytes from file" % len)
 	return true
 	
 	
@@ -29,12 +31,12 @@ func get_8():
 	return ret
 
 func bulkByteArr(size):
-	var ret = data.subarray(pos,pos+size)
+	var ret = data.slice(pos,pos+size+1)
 	pos += size
 	return ret
 
 func get_16():
-	var ret = data.subarray(pos,pos+1)
+	var ret = data.slice(pos,pos+1+1)
 	pos+=2
 	
 	#var spb = StreamPeerBuffer.new()
@@ -46,13 +48,13 @@ func get_16():
 	return (ret[1] << 8) + ret[0]
 	
 func get_32u():
-	var ret = data.subarray(pos,pos+3)
+	var ret = data.slice(pos,pos+3+1)
 	pos+=4
 	return (ret[3] << 24) + (ret[2] << 16) + (ret[1] << 8 ) + ret[0]
 
 
 func get_32():
-	var ret = data.subarray(pos,pos+3)
+	var ret = data.slice(pos,pos+3+1)
 	var spb = StreamPeerBuffer.new()
 	spb.data_array = ret
 	var single_float = spb.get_32()
@@ -60,7 +62,7 @@ func get_32():
 	return single_float
 
 func get_16u():
-	var ret = data.subarray(pos,pos+1)
+	var ret = data.slice(pos,pos+1+1)
 	ret =  (ret[1] << 8) + ret[0]
 	if (ret & 0x8000):
 		ret -= 0x8000
@@ -76,7 +78,7 @@ func get_Vector32():
 	return Vector3(x,y,z)
 
 func get_float32():
-	var ret = data.subarray(pos,pos+3)
+	var ret = data.slice(pos,pos+3+1)
 	var spb = StreamPeerBuffer.new()
 	spb.data_array = ret
 	var single_float = spb.get_float()
@@ -85,12 +87,12 @@ func get_float32():
 	
 
 func get_buffer(size):
-	var ret = data.subarray(pos,pos+(size-1))#not sure why using -1 here
+	var ret = data.slice(pos,pos+(size-1)+1)#not sure why using -1 here
 	pos+=size
 	return ret
 	
 func get_String(length):
-	var ret = data.subarray(pos,pos+(length-1)).get_string_from_ascii()
+	var ret = data.slice(pos,pos+(length-1)+1).get_string_from_ascii()
 	
 	pos+=length
 	return ret.to_upper()

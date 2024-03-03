@@ -98,7 +98,10 @@ func createLevel(dict,wadDict):
 	#atlasTexture = get_parent().get_node("lightmapAtlas").getTexture()
 	var a = Time.get_ticks_msec()
 	var atlasDict = get_parent().get_node("lightmapAtlas").initAtlas()
-	atlasDim = get_parent().get_node("lightmapAtlas").getSize()
+	if atlasDict == null:
+		print("atlas dict is empty!")
+		return false
+	atlasDim = Vector2(get_parent().get_node("lightmapAtlas").getSize())
 	atlasTexture = atlasDict["texture"]
 	var atlasRects = atlasDict["rects"]
 	
@@ -112,15 +115,19 @@ func createLevel(dict,wadDict):
 	#a = Time.get_ticks_msec()
 	var renderables= get_parent().renderables
 	
+	print("rendering meshes")
 	for faceIdx in renderables.size():
 		var face = renderables[faceIdx]
-		if face.empty():
+		if face.is_empty():
 			continue
 		var faceIndex = faceIdx#faces.find(face)
 		var meshNode = null
 		
 		
 		var fanMesh  = createMeshFromFanArr(face,faceIndex)
+		if fanMesh == null:
+			print("failed to create mesh from fan arr")
+			return false
 		
 		if fanMesh != null:
 			fanMesh.use_in_baked_light = true
@@ -266,7 +273,7 @@ func createMeshFromFanArr(fans,faceIndex):
 			
 			var mins = Vector2(INF,INF)
 			var maxs = Vector2(-INF,-INF)
-			var locDim = localLightmap.get_size() 
+			var locDim = Vector2(localLightmap.get_size())
 			
 			for i in lightmapUV.size():
 				if lightmapUV[i].x < mins.x : mins.x = lightmapUV[i].x
@@ -283,7 +290,7 @@ func createMeshFromFanArr(fans,faceIndex):
 				lightmapUV[i].x = lerp(mins.x,maxs.x,lightmapUV[i].x)
 				lightmapUV[i].y = lerp(mins.y,maxs.y,lightmapUV[i].y)
 				
-				lightmapUV[i]*=localLightmap.get_size() #convert to pixel
+				lightmapUV[i]*= locDim #convert to pixel
 				lightmapUV[i] += atlasPosArr[fIdx]#shift over the position in the atlas
 				lightmapUV[i] /= atlasDim#convert to 
 				#lightmapUV[i] /= get_parent().scale_factor)
@@ -291,8 +298,12 @@ func createMeshFromFanArr(fans,faceIndex):
 			if !get_parent().disableTextures:
 				if textureName!="SKY":
 					mat = createMat(texture,textureName,renderModeFaces)
+					if mat == null:
+						print("failed to load material")
+						return null
 				else:
-					mat = createMatSky()
+					# TODO(dan): fix sky?
+					mat = null #createMatSky()
 			
 			localSurf.add_triangle_fan(vertsLocal,triUV,[],lightmapUV,triNormals)
 			
@@ -316,7 +327,7 @@ func createMeshFromFanArr(fans,faceIndex):
 	surf.commit(runningMesh)
 
 	var meshNode = MeshInstance3D.new()
-	meshNode.name = "face_mesh_" + String(faceIndex)
+	meshNode.name = "face_mesh_%s" % faceIndex
 	meshNode.mesh = runningMesh
 	
 	# Fix real-time light shadows by ensuring that even "hollow" faces cast shadows.
@@ -329,7 +340,9 @@ func createMeshFromFanArr(fans,faceIndex):
 
 	get_parent().faceMeshNodes[faceIndex] = meshNode
 	
-	meshNode.translation = center
+	# TODO(dan): not sure if this is equivalent
+	#meshNode.translation = center
+	meshNode.position = center
 	
 	meshNode.set_meta("textureName",fans.keys()[0])
 	meshNode.set_meta("fans",fans)
@@ -354,8 +367,10 @@ func createMat(texture,textureName,render = null):
 			var textureDim = texture.get_size()
 			mat.albedo_texture = texture
 
-			if texture.get_data().detect_alpha() != 0:
-				mat.flags_transparent =true
+			# TODO(dan): figure out alpha detection
+			#if texture.get_data().detect_alpha() != 0:
+				#mat.flags_transparent =true
+		
 		#if rads.has(textureName):
 			
 		mat.flags_world_triplanar = true
@@ -374,11 +389,34 @@ func createMatSky():
 
 
 		var left = loadTGAasImage(path + "lf.tga")
+		if left == null:
+			print("failed to load lf.tga")
+			return null
+		
 		var right = loadTGAasImage(path + "rt.tga")
+		if right == null:
+			print("failed to load rt.tga")
+			return null
+		
 		var bottom = loadTGAasImage(path + "dn.tga")
+		if bottom == null:
+			print("failed to load dn.tga")
+			return null
+		
 		var top = loadTGAasImage(path + "up.tga")
+		if top == null:
+			print("failed to load up.tga")
+			return null
+		
 		var front = loadTGAasImage(path + "ft.tga")
+		if front == null:
+			print("failed to load ft.tga")
+			return null
+		
 		var back =  loadTGAasImage(path + "bk.tga")
+		if back == null:
+			print("failed to load bk.tga")
+			return null
 
 		top = rotImage(top,"top")
 		bottom = rotImage(bottom,"bottom")
@@ -412,8 +450,8 @@ func createCollisionsForMesh(meshNode):
 	#if meshNode.get_meta("textureName")[0]  == "!":
 	#	return
 
-	var center = meshNode.translation
-	meshNode.translation = Vector3.ZERO
+	var center = meshNode.position
+	meshNode.position = Vector3.ZERO
 	if meshNode.get_meta("textureName")[0]  != "!":# and meshNode.has_meta("hotFace"):
 		meshNode.create_trimesh_collision()
 	else:
@@ -440,7 +478,7 @@ func createCollisionsForMesh(meshNode):
 	
 	meshNode.remove_child(staticBodyNode)
 	meshNode.name = "face" + str(theFaceIndex)
-	staticBodyNode.translation = center
+	staticBodyNode.position = center
 	
 	if meshNode.get_meta("textureName")[0]  == "!":
 		var scriptRes = load("res://addons/gldsrcBSP/funcScripts/water.gd")
@@ -904,6 +942,9 @@ func mergeBrushModelFaces3():
 func loadTGAasImage(path):
 	var file: FileAccess
 	file = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		print("error opening TGA file %s: %s" % [path, FileAccess.get_open_error()])
+		return null
 	var buffer = file.get_buffer(file.get_len())
 
 	var image = Image.new()
@@ -967,10 +1008,10 @@ func textureLights():
 				light.spot_angle = 42
 				light.spot_angle_attenuation = 1.2
 				light.light_indirect_energy = 3
-				light.translation += f.global_transform.origin
+				light.position += f.global_transform.origin
 
 		
-				light.translation -= normal*get_parent().scaleFactor*5
+				light.position -= normal*get_parent().scaleFactor*5
 				light.set_meta("norm",normal)
 				light.set_meta("angle",atan2(normal.z,normal.y))
 				
@@ -984,7 +1025,7 @@ func textureLights():
 				#light.shadow_enabled = true
 				var indirectFake : OmniLight3D = OmniLight3D.new()
 				textureLightPar.add_child(indirectFake)
-				indirectFake.translation += f.global_transform.origin +  normal*get_parent().scaleFactor*10
+				indirectFake.position += f.global_transform.origin +  normal*get_parent().scaleFactor*10
 				indirectFake.omni_range = 10
 				if !oneshotDict.has(textureName):
 					

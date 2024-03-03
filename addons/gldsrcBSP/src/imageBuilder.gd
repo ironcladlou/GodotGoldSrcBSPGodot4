@@ -20,10 +20,7 @@ func createImage(fileDict,isDecal = false,imageDictParam = null):#imageDictParam
 	#var isDecal = imageDict["name"][0] == "{" and isDecal
 	var w = imageDict["dim"][0]
 	var h = imageDict["dim"][1]
-	var image : Image = Image.new()
-	image.create(w,h,false,Image.FORMAT_RGBA8)
-	image.lock()
-	
+	var image = Image.create(w,h,false,Image.FORMAT_RGBA8)
 	
 	for y in h:
 		for x in w:
@@ -53,14 +50,11 @@ func createImage(fileDict,isDecal = false,imageDictParam = null):#imageDictParam
 	
 	#image.create_from_data(w,h,false,image.FORMAT_RGBA8,RGBA)
 
-	image.unlock()
-	var texture = ImageTexture.new()
+	var texture = ImageTexture.create_from_image(image)
 	
-	
-	
-	texture.create_from_image(image)
-	if !get_parent().textureFiltering:
-		texture.flags -= texture.FLAG_FILTER
+	# TODO(dan): disabling for now
+	#if !get_parent().textureFiltering:
+		#texture.flags -= texture.FLAG_FILTER
 	return texture
 	
 func parseTexture(file,offset,size):
@@ -145,9 +139,8 @@ func createImageArrFromSpr(path):
 		
 		var w = frameW
 		var h = frameH
-		var image : Image = Image.new()
-		image.create(w,h,false,Image.FORMAT_RGBA8)
-		image.lock()
+		var image : Image = Image.create(w,h,false,Image.FORMAT_RGBA8)
+
 		var lan = file.get_len()
 		var data = file.get_buffer(w*h)
 		
@@ -169,8 +162,7 @@ func createTextureFromSpr(path):
 	texture.frames = imgArr.size()
 	
 	for i in imgArr.size():
-		var frame = ImageTexture.new()
-		frame.create_from_image(imgArr[i])
+		var frame = ImageTexture.create_from_image(imgArr[i])
 		texture.set_frame_texture(i,frame)
 	
 	

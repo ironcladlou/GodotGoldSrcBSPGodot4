@@ -55,21 +55,25 @@ func getSize():
 	return image.get_size()
 
 func getTexture():
-	texture.create_from_image(image)
+	ImageTexture.create_from_image(image)
 	#texture.flags = 0
 	return texture
 
 func initAtlas():
-	var atlasArr =Geometry2D.make_atlas(atlasImgDimArr)
+	if atlasImgDimArr.is_empty():
+		print("atlas is empty, aborting init")
+		return null
+	
+	var atlasArr = Geometry2D.make_atlas(atlasImgDimArr)
 	atlasPos = atlasArr["points"]
 	atlasDim = atlasArr["size"]
+	print("created atlas")
 	
-	image = Image.new()
-	image.create(atlasDim.x,atlasDim.y,true,Image.FORMAT_RGB8)
+	image = Image.create(atlasDim.x,atlasDim.y,true,Image.FORMAT_RGB8)
 	texture = ImageTexture.new()
 	#texture.flags = 0
 	
-	
+	print("atlastImgDimArr = {}".format(atlasImgDimArr))
 	for i in atlasImgDimArr.size():
 		var source = Rect2(Vector2.ZERO,atlasImgDimArrImg[i].get_size())
 		image.blit_rect(atlasImgDimArrImg[i],source,atlasPos[i])
@@ -81,7 +85,7 @@ func initAtlas():
 	#image.crop(maxW,curPos.y + dim.y)
 	#for i in atla
 	#image.resize(image.get_size().x,image.get_size().y,Image.INTERPOLATE_TRILINEAR)
-	texture.create_from_image(image)
+	ImageTexture.create_from_image(image)
 	#texture.flags = 0
 	
 	#image.save_png("atlas.png")

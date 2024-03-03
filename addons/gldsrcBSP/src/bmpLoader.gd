@@ -31,8 +31,7 @@ func getImageFromBMP(path,rotate = false):
 
 func createTextureFromBMP(path):
 	var img = getImageFromBMP(path)
-	var texture = ImageTexture.new()
-	texture.create_from_image(img)
+	var texture = ImageTexture.create_from_image(img)
 
 	return texture
 func parseInfoHeader():

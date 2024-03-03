@@ -226,7 +226,7 @@ func allWADparse(entityDict,wadDict):
 			hasDecal = true
 			
 		i = i.replace("\\","/")
-		i = i.substr(i.find_last("/")+1)
+		i = i.substr(i.rfind("/")+1)
 		var parsedWad = WADparse(baseDir + i.to_lower())
 		if parsedWad != null:
 			wadDict[i] = parsedWad
@@ -1765,7 +1765,7 @@ func deleteModelCollision(modelInfo):
 				deleted = true
 
 func guessWadPath(path):
-	if path.find_last("Half-Life") != -1:
+	if path.rfind("Half-Life") != -1:
 		var pathPre = path.substr(0, path.find_last("Half-Life"))
 		return pathPre + "Half-Life/valve/halflife.wad" 
 	else:
